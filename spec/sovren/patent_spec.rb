@@ -1,27 +1,22 @@
 require 'spec_helper'
 
 describe Sovren::Patent do
-  use_natural_assertions
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/patents.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'patents.xml' }
+      let(:result) { Sovren::Patent.parse(xml) }
 
-      When(:result) { Sovren::Patent.parse(xml) }
-
-      Then { result.length == 1 }
-      Then { result.first.title == "Method and Apparatus for Removing Corn Kernels From Dentures" }
-      Then { result.first.description == "George Doam and Neil Griffin, inventors, \"Method and Apparatus for Removing Corn Kernels From Dentures\", Patent 1,064,098." }
-      Then { result.first.inventor_name == "George Doam and Neil Griffin" }
-      Then { result.first.patent_id == "1064098" }
+      specify { expect(result.length).to eq(1) }
+      specify { expect(result.first.title).to eq("Method and Apparatus for Removing Corn Kernels From Dentures") }
+      specify { expect(result.first.description).to eq("George Doam and Neil Griffin, inventors, \"Method and Apparatus for Removing Corn Kernels From Dentures\", Patent 1,064,098.") }
+      specify { expect(result.first.inventor_name).to eq("George Doam and Neil Griffin") }
+      specify { expect(result.first.patent_id).to eq("1064098") }
     end
 
     context "no patents" do
-      When(:result) { Sovren::Patent.parse(nil) }
+      let(:result) { Sovren::Patent.parse(nil) }
 
-      Then { result == Array.new }
+      specify { expect(result).to eq(Array.new) }
     end
   end
-
 end

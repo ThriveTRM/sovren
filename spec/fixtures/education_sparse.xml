@@ -7,4 +7,9 @@
       <DegreeName>B.S.</DegreeName>
     </Degree>
   </SchoolOrInstitution>
+  <EducationalMeasure>
+    <MeasureValue>
+      <StringValue></StringValue>
+    </MeasureValue>
+  </EducationalMeasure>
 </EducationHistory>

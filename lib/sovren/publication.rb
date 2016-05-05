@@ -1,5 +1,7 @@
 module Sovren
   class Publication
+    extend Sovren::ParseHelpers
+
     attr_accessor :type, :title, :role, :publication_date, :journal_or_serial_name, :volume, :issue, :page_number, :abstract, :copyright_date, :copyright_text, :edition, :isbn, :publisher_name, :publisher_location, :event_name, :conference_date, :conference_location, :comments, :number_of_pages
 
     def self.parse(publications)
@@ -22,14 +24,14 @@ module Sovren
         c.publisher_name = item.css('PublisherName').text
         c.publisher_location = item.css('PublisherLocation').text
         c.event_name = item.css('EventName').text
-        c.conference_date = Date.parse(item.css('ConferenceDate AnyDate').text) rescue nil
+        c.conference_date = parse_date item.css('ConferenceDate AnyDate').text
         c.conference_location = item.css('ConferenceLocation').text
         c.comments = item.css('Comments').text
-        c.number_of_pages = item.css('NumberOfPages').text.to_i rescue nil
+        c.number_of_pages = parse_integer item.css('NumberOfPages').text
         c
       end
       result
     end
-  
+
   end
 end

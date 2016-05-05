@@ -1,26 +1,21 @@
 require 'spec_helper'
 
 describe Sovren::Competency do
-  use_natural_assertions
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/competencies.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'competencies.xml' }
+      let(:result) { Sovren::Competency.parse(xml) }
 
-      When(:result) { Sovren::Competency.parse(xml) }
-
-      Then { result.length == 50 }
-      Then { result.first.name == "MARKETING" }
-      Then { result.first.months == 158 }
-      Then { result.first.last_used_date == Date.new(2013,4,29) }
+      specify { expect(result.length).to eq(50) }
+      specify { expect(result.first.name).to eq("MARKETING") }
+      specify { expect(result.first.months).to eq(158) }
+      specify { expect(result.first.last_used_date).to eq(Date.new(2013,4,29)) }
     end
 
     context "no competencies" do
-      When(:result) { Sovren::Competency.parse(nil) }
+      let(:result) { Sovren::Competency.parse(nil) }
 
-      Then { result == Array.new }
+      specify { expect(result).to eq(Array.new) }
     end
   end
-
 end

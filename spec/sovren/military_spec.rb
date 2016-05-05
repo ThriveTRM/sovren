@@ -1,29 +1,24 @@
 require 'spec_helper'
 
 describe Sovren::Military do
-  use_natural_assertions
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/military.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'military.xml' }
+      let(:result) { Sovren::Military.parse(xml) }
 
-      When(:result) { Sovren::Military.parse(xml) }
-
-      Then { result.country_served == "US" }
-      Then { result.branch == "Army" }
-      Then { result.rank_achieved == "FIRST LIEUTENANT" }
-      Then { result.recognition_achieved == "Purple Heart" }
-      Then { result.discharge_status == "Honorable" }
-      Then { result.start_date == Date.new(1966,1,1) }
-      Then { result.end_date == Date.new(1967,1,1) }
+      specify { expect(result.country_served).to eq("US") }
+      specify { expect(result.branch).to eq("Army") }
+      specify { expect(result.rank_achieved).to eq("FIRST LIEUTENANT") }
+      specify { expect(result.recognition_achieved).to eq("Purple Heart") }
+      specify { expect(result.discharge_status).to eq("Honorable") }
+      specify { expect(result.start_date).to eq(Date.new(1966,1,1)) }
+      specify { expect(result.end_date).to eq(Date.new(1967,1,1)) }
     end
 
     context "no military history" do
-      When(:result) { Sovren::Military.parse(nil) }
+      let(:result) { Sovren::Military.parse(nil) }
 
-      Then { result == nil }
+      specify { expect(result).to eq(nil) }
     end
   end
-
 end

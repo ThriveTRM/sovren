@@ -1,70 +1,65 @@
 require 'spec_helper'
 
 describe Sovren::Publication do
-  use_natural_assertions
+  let(:publication) { Sovren::Publication.new }
 
-  When(:publication) { Sovren::Publication.new }
+  specify { expect(publication).to respond_to :type }
+  specify { expect(publication).to respond_to :title }
+  specify { expect(publication).to respond_to :role }
+  specify { expect(publication).to respond_to :publication_date }
+  specify { expect(publication).to respond_to :journal_or_serial_name }
+  specify { expect(publication).to respond_to :volume }
+  specify { expect(publication).to respond_to :issue }
+  specify { expect(publication).to respond_to :page_number }
+  specify { expect(publication).to respond_to :abstract }
+  specify { expect(publication).to respond_to :copyright_date }
+  specify { expect(publication).to respond_to :copyright_text }
+  specify { expect(publication).to respond_to :edition }
+  specify { expect(publication).to respond_to :isbn }
+  specify { expect(publication).to respond_to :publisher_name }
+  specify { expect(publication).to respond_to :publisher_location }
+  specify { expect(publication).to respond_to :event_name }
+  specify { expect(publication).to respond_to :conference_date }
+  specify { expect(publication).to respond_to :conference_location }
+  specify { expect(publication).to respond_to :comments }
+  specify { expect(publication).to respond_to :number_of_pages }
 
-  Then { publication.should respond_to :type }
-  Then { publication.should respond_to :title }
-  Then { publication.should respond_to :role }
-  Then { publication.should respond_to :publication_date }
-  Then { publication.should respond_to :journal_or_serial_name }
-  Then { publication.should respond_to :volume }
-  Then { publication.should respond_to :issue }
-  Then { publication.should respond_to :page_number }
-  Then { publication.should respond_to :abstract }
-  Then { publication.should respond_to :copyright_date }
-  Then { publication.should respond_to :copyright_text }
-  Then { publication.should respond_to :edition }
-  Then { publication.should respond_to :isbn }
-  Then { publication.should respond_to :publisher_name }
-  Then { publication.should respond_to :publisher_location }
-  Then { publication.should respond_to :event_name }
-  Then { publication.should respond_to :conference_date }
-  Then { publication.should respond_to :conference_location }
-  Then { publication.should respond_to :comments }
-  Then { publication.should respond_to :number_of_pages }
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/publications.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'publications.xml' }
+      let(:result) { Sovren::Publication.parse(xml) }
 
-      When(:result) { Sovren::Publication.parse(xml) }
+      specify { expect(result.length).to eq(4) }
+      specify { expect(result[0].type).to eq("Article") }
+      specify { expect(result[1].type).to eq("Book") }
+      specify { expect(result[2].type).to eq("ConferencePaper") }
+      specify { expect(result[3].type).to eq("Thesis") }
 
-      Then { result.length == 4 }
-      Then { result[0].type == "Article" }
-      Then { result[1].type == "Book" }
-      Then { result[2].type == "ConferencePaper" }
-      Then { result[3].type == "Thesis" }
-
-      Then { result.first.title == "Designing Interfaces for Youth Services Information Management" }
-      Then { result.first.role == "author" }
-      Then { result.first.publication_date == "1996-06" }
-      Then { result.first.journal_or_serial_name == "1996 Human-Computer Interaction Laboratory Video Reports" }
-      Then { result.first.volume == "2" }
-      Then { result.first.issue == "3" }
-      Then { result.first.page_number == "319-329" }
-      Then { result[1].abstract == "A very readable introduction to XML." }
-      Then { result[1].copyright_date == "2001" }
-      Then { result[1].copyright_text == "Copyright 2nd edition" }
-      Then { result[1].edition == "2nd Edition" }
-      Then { result[1].isbn == "0596000222" }
-      Then { result[1].publisher_name == "O'Malley Associates" }
-      Then { result[1].publisher_location == "Garden City, NY, US" }
-      Then { result[2].event_name == "SHRM 55th Annual Conference and Exposition" }
-      Then { result[2].conference_date == Date.new(2003,06,10) }
-      Then { result[2].conference_location == "Orlando, FL" }
-      Then { result[3].comments == "Ph.D., University of California" }
-      Then { result[3].number_of_pages == 158 }
+      specify { expect(result.first.title).to eq("Designing Interfaces for Youth Services Information Management") }
+      specify { expect(result.first.role).to eq("author") }
+      specify { expect(result.first.publication_date).to eq("1996-06") }
+      specify { expect(result.first.journal_or_serial_name).to eq("1996 Human-Computer Interaction Laboratory Video Reports") }
+      specify { expect(result.first.volume).to eq("2") }
+      specify { expect(result.first.issue).to eq("3") }
+      specify { expect(result.first.page_number).to eq("319-329") }
+      specify { expect(result[1].abstract).to eq("A very readable introduction to XML.") }
+      specify { expect(result[1].copyright_date).to eq("2001") }
+      specify { expect(result[1].copyright_text).to eq("Copyright 2nd edition") }
+      specify { expect(result[1].edition).to eq("2nd Edition") }
+      specify { expect(result[1].isbn).to eq("0596000222") }
+      specify { expect(result[1].publisher_name).to eq("O'Malley Associates") }
+      specify { expect(result[1].publisher_location).to eq("Garden City, NY, US") }
+      specify { expect(result[2].event_name).to eq("SHRM 55th Annual Conference and Exposition") }
+      specify { expect(result[2].conference_date).to eq(Date.new(2003,06,10)) }
+      specify { expect(result[2].conference_location).to eq("Orlando, FL") }
+      specify { expect(result[3].comments).to eq("Ph.D., University of California") }
+      specify { expect(result[3].number_of_pages).to eq(158) }
     end
 
     context "no publications" do
-      When(:result) { Sovren::Publication.parse(nil) }
+      let(:result) { Sovren::Publication.parse(nil) }
 
-      Then { result == Array.new }
+      specify { expect(result).to eq(Array.new) }
     end
   end
-
 end

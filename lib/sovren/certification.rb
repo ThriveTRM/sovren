@@ -1,5 +1,7 @@
 module Sovren
   class Certification
+    extend Sovren::ParseHelpers
+
     attr_accessor :name, :description, :effective_date
 
     def self.parse(certifications)
@@ -8,11 +10,11 @@ module Sovren
         c = Certification.new
         c.name = item.css('Name').text
         c.description = item.css('Description').text
-        c.effective_date = Date.parse(item.css('EffectiveDate FirstIssuedDate AnyDate').text) rescue nil
+        c.effective_date = parse_date item.css('EffectiveDate FirstIssuedDate AnyDate').text
         c
       end
       result
     end
-  
+
   end
 end

@@ -1,73 +1,66 @@
 require 'spec_helper'
 
 describe Sovren::ContactInformation do
-  use_natural_assertions
+  let(:contact_information) { Sovren::ContactInformation.new }
 
-  Given(:contact_information) { Sovren::ContactInformation.new }
+  specify { expect(contact_information).to respond_to :first_name }
+  specify { expect(contact_information).to respond_to :middle_name }
+  specify { expect(contact_information).to respond_to :last_name }
+  specify { expect(contact_information).to respond_to :generation }
 
-  Then { contact_information.should respond_to :first_name }
-  Then { contact_information.should respond_to :middle_name }
-  Then { contact_information.should respond_to :last_name }
-  Then { contact_information.should respond_to :generation }
+  specify { expect(contact_information).to respond_to :address_line_1 }
+  specify { expect(contact_information).to respond_to :address_line_2 }
+  specify { expect(contact_information).to respond_to :city }
+  specify { expect(contact_information).to respond_to :state }
+  specify { expect(contact_information).to respond_to :country }
+  specify { expect(contact_information).to respond_to :postal_code }
 
-  Then { contact_information.should respond_to :address_line_1 }
-  Then { contact_information.should respond_to :address_line_2 }
-  Then { contact_information.should respond_to :city }
-  Then { contact_information.should respond_to :state }
-  Then { contact_information.should respond_to :country }
-  Then { contact_information.should respond_to :postal_code }
+  specify { expect(contact_information).to respond_to :home_phone }
+  specify { expect(contact_information).to respond_to :mobile_phone }
 
-  Then { contact_information.should respond_to :home_phone }
-  Then { contact_information.should respond_to :mobile_phone }
+  specify { expect(contact_information).to respond_to :email }
+  specify { expect(contact_information).to respond_to :website }
 
-  Then { contact_information.should respond_to :email }
-  Then { contact_information.should respond_to :website }
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/contact_information.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'contact_information.xml' }
+      let(:result) { Sovren::ContactInformation.parse(xml) }
 
-      When(:result) { Sovren::ContactInformation.parse(xml) }
+      specify { expect(result.first_name).to eq("John") }
+      specify { expect(result.middle_name).to eq("F.") }
+      specify { expect(result.last_name).to eq("Adams") }
+      specify { expect(result.generation).to eq("III") }
+      specify { expect(result.aristocratic_title).to eq("Duke") }
+      specify { expect(result.form_of_address).to eq("Mr.") }
+      specify { expect(result.qualification).to eq("M.D.") }
 
-      Then { result.first_name == "John" }
-      Then { result.middle_name == "F." }
-      Then { result.last_name == "Adams" }
-      Then { result.generation == "III" }
-      Then { result.aristocratic_title == "Duke" }
-      Then { result.form_of_address == "Mr." }
-      Then { result.qualification == "M.D." }
+      specify { expect(result.address_line_1).to eq("930 Via Mil Cumbres") }
+      specify { expect(result.address_line_2).to eq("Unit 119") }
+      specify { expect(result.city).to eq("Solana Beach") }
+      specify { expect(result.state).to eq("CA") }
+      specify { expect(result.postal_code).to eq("92075") }
+      specify { expect(result.country).to eq("US") }
 
-      Then { result.address_line_1 == "930 Via Mil Cumbres" }
-      Then { result.address_line_2 == "Unit 119" }
-      Then { result.city == "Solana Beach" }
-      Then { result.state == "CA" }
-      Then { result.postal_code == "92075" }
-      Then { result.country == "US" }
+      specify { expect(result.home_phone).to eq("(858) 555-1000") }
+      specify { expect(result.mobile_phone).to eq("(858) 555-1001") }
 
-      Then { result.home_phone == "(858) 555-1000" }
-      Then { result.mobile_phone == "(858) 555-1001" }
+      specify { expect(result.website).to eq("http://www.linkedin.com/in/johnadams") }
+      specify { expect(result.email).to eq("johnadams@yamoo.com") }
+    end
 
-      Then { result.website == "http://www.linkedin.com/in/johnadams" }
-      Then { result.email == "johnadams@yamoo.com" }
-    end  
-    
     context "a sparse resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/contact_information_sparse.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'contact_information_sparse.xml' }
+      let(:result) { Sovren::ContactInformation.parse(xml) }
 
-      When(:result) { Sovren::ContactInformation.parse(xml) }
-
-      Then { result.first_name == "John" }
-      Then { result.last_name == "Adams" }
-      Then { result.email == "johnadams@yamoo.com" }
-    end  
+      specify { expect(result.first_name).to eq("John") }
+      specify { expect(result.last_name).to eq("Adams") }
+      specify { expect(result.email).to eq("johnadams@yamoo.com") }
+    end
 
     context "no contact info" do
-      When(:result) { Sovren::ContactInformation.parse(nil) }
+      let(:result) { Sovren::ContactInformation.parse(nil) }
 
-      Then { result == nil }
-    end  
+      specify { expect(result).to eq(nil) }
+    end
   end
-
 end

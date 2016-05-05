@@ -1,43 +1,47 @@
 require 'spec_helper'
 
 describe Sovren::Client do
-  Given(:sovren_client) { Sovren::Client.new(endpoint: "foo1", username: "foo2", password: "foo3") }
+  let(:client) { Sovren::Client.new(endpoint: "foo1", account_id: "foo2", service_key: "foo3") }
 
-  context 'init' do
-    Then { sovren_client.should_not be_nil }
+  describe '.initialize' do
+    specify { expect(client).not_to be_nil }
   end
 
-  context '.config' do
-    Then { sovren_client.should respond_to :endpoint }
-    Then { sovren_client.endpoint == "foo1" }
-    Then { sovren_client.should respond_to :username }
-    Then { sovren_client.username == "foo2" }
-    Then { sovren_client.should respond_to :password }
-    Then { sovren_client.password == "foo3" }
+  describe ".config" do
+    specify { expect(client).to respond_to :endpoint }
+    specify { expect(client.endpoint).to eq("foo1") }
+    specify { expect(client).to respond_to :account_id }
+    specify { expect(client.account_id).to eq("foo2") }
+    specify { expect(client).to respond_to :service_key }
+    specify { expect(client.service_key).to eq("foo3") }
   end
 
-  describe 'parsing' do
-    Given(:sovren_client) { Sovren::Client.new(endpoint: "http://www.foo.com/") }
-    Given(:resume) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/ResumeSample.doc')) }
+  describe '.parse', vcr: {cassette_name: 'parsed_resume'} do
+    let(:resume) { file_fixture 'ResumeSample.doc' }
+    let(:client) { Sovren::Client.new(endpoint: "http://www.foo.com/") }
 
-    context ".parse", vcr: {cassette_name: 'parsed_resume'} do
-      When(:result) { sovren_client.parse(resume) }
-      Then { result.class.should == Sovren::Resume }
-    end
-  end
+    let(:error_response) {
+      { code: 'CRAP!', message: 'AHH!' }
+    }
 
-  describe 'converting' do
-    Given(:sovren_client) { Sovren::Client.new(endpoint: "http://www.foo.com/") }
-    Given(:resume) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/ResumeSample.doc')) }
-
-    context ".convert", vcr: {cassette_name: 'converted_resume'} do 
-      When(:result) { sovren_client.convert(resume, "PLAIN_TEXT") }
-      Then { result.class.should == String }
+    it 'builds a Sovren::Resume' do
+      expect(client.parse(resume)).to be_a(Sovren::Resume)
     end
 
-    context ".convert", vcr: {cassette_name: 'converted_resume'} do 
-      When(:result) { sovren_client.convert(resume, "HTML_FORMATTED") }
-      Then { result.class.should == String }
+    it 'accepts extra options' do
+      expect_any_instance_of(Savon::LocalOptions)
+        .to receive(:message).with('request' => hash_including('foo' => 'bar'))
+        .and_call_original
+
+      client.parse(resume, 'foo' => 'bar')
+    end
+
+    it 'throws errors' do
+      expect(client).to receive_message_chain(:connection, :call) do
+        double(body: { parse_resume_response: { parse_resume_result: error_response } })
+      end
+
+      expect { client.parse(resume) }.to raise_error(Sovren::Error)
     end
   end
 end

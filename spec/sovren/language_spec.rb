@@ -1,27 +1,22 @@
 require 'spec_helper'
 
 describe Sovren::Language do
-  use_natural_assertions
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/languages.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml) { xml_fixture 'languages.xml' }
+      let(:result) { Sovren::Language.parse(xml) }
 
-      When(:result) { Sovren::Language.parse(xml) }
-
-      Then { result.length == 3 }
-      Then { result.first.language_code == "ps" }
-      Then { result.first.read? == true }
-      Then { result.first.speak? == true }
-      Then { result.first.write? == true }
+      specify { expect(result.length).to eq(3) }
+      specify { expect(result.first.language_code).to eq("ps") }
+      specify { expect(result.first.read?).to eq(true) }
+      specify { expect(result.first.speak?).to eq(true) }
+      specify { expect(result.first.write?).to eq(true) }
     end
 
     context "no languages" do
-      When(:result) { Sovren::Language.parse(nil) }
+      let(:result) { Sovren::Language.parse(nil) }
 
-      Then { result == Array.new }
+      specify { expect(result).to eq(Array.new) }
     end
   end
-
 end

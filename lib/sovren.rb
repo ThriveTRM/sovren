@@ -3,30 +3,35 @@ require "sovren/version"
 require 'savon'
 require 'httpclient'
 require 'nokogiri'
+require 'sovren/parse_helpers'
+require 'sovren/achievement'
+require 'sovren/association'
+require 'sovren/certification'
+require 'sovren/client'
+require 'sovren/competency'
+require 'sovren/contact_information'
+require 'sovren/education'
+require 'sovren/employment'
+require 'sovren/error'
+require 'sovren/language'
+require 'sovren/military'
+require 'sovren/patent'
+require 'sovren/publication'
+require 'sovren/reference'
+require 'sovren/resume'
 
 module Sovren
   class << self
-    FIELDS = [:endpoint, :username, :password, :timeout, :hard_time_out_multiplier, :parser_configuration_params]
-    attr_accessor(*FIELDS)
+    attr_accessor :endpoint
+    attr_accessor :username
+    attr_accessor :password
+    attr_accessor :timeout
+    attr_accessor :hard_time_out_multiplier
+    attr_accessor :parser_configuration_params
 
     def configure
       yield self
       true
     end
   end
-
-  require_relative "sovren/achievement"
-  require_relative "sovren/association"
-  require_relative "sovren/certification"
-  require_relative "sovren/client"
-  require_relative "sovren/competency"
-  require_relative "sovren/contact_information"
-  require_relative "sovren/education"
-  require_relative "sovren/employment"
-  require_relative "sovren/resume"
-  require_relative "sovren/language"
-  require_relative "sovren/military"
-  require_relative "sovren/patent"
-  require_relative "sovren/publication"
-  require_relative "sovren/reference"
 end

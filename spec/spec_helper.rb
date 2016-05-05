@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'rspec/given'
 require 'httpclient'
 require 'vcr'
 require 'sovren'
@@ -12,6 +11,16 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
 end
 
+module FileHelper
+  def file_fixture(filename)
+    File.read File.join(File.expand_path('../fixtures/', __FILE__), filename)
+  end
+
+  def xml_fixture(filename)
+    Nokogiri::XML.parse file_fixture(filename)
+  end
+end
+
 RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.include FileHelper
 end

@@ -1,34 +1,29 @@
 require 'spec_helper'
 
 describe Sovren::Reference do
-  use_natural_assertions
+  let(:reference) { Sovren::Reference.new }
 
-  When(:reference) { Sovren::Reference.new }
+  specify { expect(reference).to respond_to :name }
+  specify { expect(reference).to respond_to :title }
+  specify { expect(reference).to respond_to :email }
+  specify { expect(reference).to respond_to :phone_number }
 
-  Then { reference.should respond_to :name }
-  Then { reference.should respond_to :title }
-  Then { reference.should respond_to :email }
-  Then { reference.should respond_to :phone_number }
-
-  context ".parse" do
+  describe ".parse" do
     context "a full resume" do
-      Given(:raw_xml) { File.read(File.expand_path(File.dirname(__FILE__) + '/../support/references.xml')) }
-      Given(:xml) { Nokogiri::XML.parse(raw_xml) }
+      let(:xml)    { xml_fixture 'references.xml' }
+      let(:result) { Sovren::Reference.parse(xml) }
 
-      When(:result) { Sovren::Reference.parse(xml) }
-
-      Then { result.length == 1 }
-      Then { result.first.name == "Babs Smith" }
-      Then { result.first.title == "Manager" }
-      Then { result.first.email == "babs@somers.com" }
-      Then { result.first.phone_number == "845-876-0988" }
+      specify { expect(result.length).to eq(1) }
+      specify { expect(result.first.name).to eq("Babs Smith") }
+      specify { expect(result.first.title).to eq("Manager") }
+      specify { expect(result.first.email).to eq("babs@somers.com") }
+      specify { expect(result.first.phone_number).to eq("845-876-0988") }
     end
 
     context "no references" do
-      When(:result) { Sovren::Reference.parse(nil) }
+      let(:result) { Sovren::Reference.parse(nil) }
 
-      Then { result == Array.new }
+      specify { expect(result).to eq(Array.new) }
     end
   end
-
 end
