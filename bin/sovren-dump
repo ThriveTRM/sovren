@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'pp'
+require 'sovren'
+
+class Sovren::Resume
+  def self.parse(content)
+    puts content
+  end
+end
+
+abort 'Missing filename argument' unless ARGV.first
+
+client = Sovren::Client.new(
+  endpoint: ENV['SOVREN_ENDPOINT'],
+  account_id: ENV['SOVREN_ACCOUNT_ID'],
+  service_key: ENV['SOVREN_SERVICE_KEY']
+)
+
+client.parse File.read(ARGV.first)
