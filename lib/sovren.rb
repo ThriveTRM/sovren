@@ -1,5 +1,5 @@
 require 'bundler/setup'
-require "sovren/version"
+require 'sovren/version'
 require 'savon'
 require 'httpclient'
 require 'nokogiri'
