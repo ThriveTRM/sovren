@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'savon', '~> 2.2'
   s.add_dependency 'httpclient', '~> 2.3'
-  s.add_dependency 'nokogiri', '~> 1.6'
+  s.add_dependency 'nokogiri'
   s.add_development_dependency 'bundler', '~> 1.3'
   s.add_development_dependency 'rake', '>= 0'
   s.add_development_dependency 'pry', '>= 0'
